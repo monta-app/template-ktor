@@ -54,7 +54,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("org.flywaydb:flyway-core") { version { strictly("7.15.0") } }
+    implementation("org.flywaydb:flyway-core:8.5.10")
     runtimeOnly("mysql:mysql-connector-java:8.0.29")
 
     // Metrics
@@ -77,10 +77,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.3.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.3.0")
     testImplementation("io.strikt:strikt-core:0.34.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("com.h2database:h2:2.1.212")
     testRuntimeOnly("org.testcontainers:mysql:1.17.1")
 }
 
