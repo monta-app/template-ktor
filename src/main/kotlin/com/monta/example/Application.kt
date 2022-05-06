@@ -1,5 +1,6 @@
 package com.monta.example
 
+import com.monta.example.book.registerBookModule
 import com.monta.example.plugins.configureDatabase
 import com.monta.example.plugins.configureMonitoring
 import com.monta.example.plugins.configureRouting
@@ -14,6 +15,7 @@ import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.slf4j.LoggerFactory
+import java.util.*
 
 fun main() {
     embeddedServer(
@@ -40,10 +42,15 @@ fun main() {
 }
 
 fun Application.configureApplication() {
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+
     configureSerialization()
     val metricsRegistry = configureMonitoring()
     configureDatabase(metricsRegistry, true)
     configureSecurity()
     configureStatusPages()
     configureRouting()
+
+    // Modules
+    registerBookModule()
 }

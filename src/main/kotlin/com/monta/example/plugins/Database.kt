@@ -29,8 +29,8 @@ private fun startFlyway(dataSource: DataSource) {
     logger.info("starting Flyway environment=${Environment.current}")
 
     val locations = buildList {
-        add("classpath:db/migration/common")
-        add("classpath:db/migration/${Environment.current.name.lowercase()}")
+        add("classpath:migration/common")
+        add("classpath:migration/${Environment.current.name.lowercase()}")
     }
 
     logger.info("with locations: $locations")

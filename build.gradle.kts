@@ -1,5 +1,7 @@
 val ktorVersion: String by project
 val kotlinVersion: String by project
+val exposedVersion: String by project
+val koinVersion: String by project
 
 plugins {
     application
@@ -16,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    // Boms
+    // BOM
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
     implementation(platform("io.ktor:ktor-bom:$ktorVersion"))
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.13.2.1"))
@@ -27,8 +29,16 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
 
+    // Injection
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
+    testImplementation("io.insert-koin:koin-test-junit5:$koinVersion")
+
     // Serialization
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation("io.ktor:ktor-client-content-negotiation")
     implementation("io.ktor:ktor-serialization-jackson-jvm")
 
     // Jackson
@@ -39,10 +49,10 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Database
-    implementation("org.jetbrains.exposed:exposed-core:0.38.2")
-    implementation("org.jetbrains.exposed:exposed-dao:0.38.2")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.38.2")
-    implementation("org.jetbrains.exposed:exposed-java-time:0.38.2")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.flywaydb:flyway-core") { version { strictly("7.15.0") } }
     runtimeOnly("mysql:mysql-connector-java:8.0.29")
@@ -58,11 +68,20 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
 
+    // Auth
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
 
+    // Test
     testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.3.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.3.0")
+    testImplementation("io.strikt:strikt-core:0.34.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.testcontainers:mysql:1.17.1")
 }
 
 application {

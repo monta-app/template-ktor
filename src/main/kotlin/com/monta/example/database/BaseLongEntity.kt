@@ -50,5 +50,17 @@ abstract class BaseLongEntityClass<E : BaseLongEntity>(table: BaseLongIdTable) :
     }
 }
 
+abstract class BaseLongRepository<E : BaseLongEntity>(
+    private val table: BaseLongEntityClass<E>,
+) {
+    fun getAll(): List<E> {
+        return table.all().toList()
+    }
+
+    fun getById(id: Long): E? {
+        return table.findById(id)
+    }
+}
+
 val BaseLongEntity.idValue: Long
     get() = this.id.value
