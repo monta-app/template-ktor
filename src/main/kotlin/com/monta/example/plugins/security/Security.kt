@@ -1,11 +1,16 @@
-package com.monta.example.plugins
+package com.monta.example.plugins.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.monta.example.plugins.ApplicationException
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.config.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import java.util.*
 
 fun Application.configureSecurity() {
     val jwtConfig = JwtConfiguration(environment.config)
@@ -28,18 +33,21 @@ fun Application.configureSecurity() {
             }
         }
     }
+
+    routing {
+        post("/auth/login") {
+            val loginRequest = call.receive<LoginRequest>()
+
+            if (loginRequest.password != "123456") {
+                throw ApplicationException(HttpStatusCode.Unauthorized)
+            }
+
+            call.respond(
+                mapOf(
+                    "accessToken" to createToken(jwtConfig, loginRequest.username)
+                )
+            )
+        }
+    }
 }
 
-internal data class JwtConfiguration(
-    val audience: String,
-    val realm: String,
-    val secret: String,
-    val domain: String,
-) {
-    constructor(applicationConfig: ApplicationConfig) : this(
-        audience = applicationConfig.property("jwt.audience").getString(),
-        realm = applicationConfig.property("jwt.realm").getString(),
-        secret = applicationConfig.property("jwt.secret").getString(),
-        domain = applicationConfig.property("jwt.domain").getString()
-    )
-}

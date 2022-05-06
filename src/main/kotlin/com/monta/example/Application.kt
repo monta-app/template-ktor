@@ -3,8 +3,7 @@ package com.monta.example
 import com.monta.example.book.registerBookModule
 import com.monta.example.plugins.configureDatabase
 import com.monta.example.plugins.configureMonitoring
-import com.monta.example.plugins.configureRouting
-import com.monta.example.plugins.configureSecurity
+import com.monta.example.plugins.security.configureSecurity
 import com.monta.example.plugins.configureSerialization
 import com.monta.example.plugins.configureStatusPages
 import com.monta.example.util.Environment
@@ -49,7 +48,6 @@ fun Application.configureApplication() {
     configureDatabase(metricsRegistry, true)
     configureSecurity()
     configureStatusPages()
-    configureRouting()
 
     // Modules
     registerBookModule()

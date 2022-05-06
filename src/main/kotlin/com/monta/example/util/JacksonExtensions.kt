@@ -11,13 +11,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 
 object JacksonExtensions {
     fun getDefaultMapper(): ObjectMapper {
-        return ObjectMapper()
-            .registerKotlinModule()
-            .registerModule(JavaTimeModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .findAndRegisterModules()
+        return ObjectMapper().defaultConfiguration()
     }
 
     /**
@@ -32,6 +26,16 @@ object JacksonExtensions {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .findAndRegisterModules()
     }
+}
+
+fun ObjectMapper.defaultConfiguration(): ObjectMapper {
+    registerKotlinModule()
+    registerModule(JavaTimeModule())
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    findAndRegisterModules()
+    return this
 }
 
 inline fun <reified T> ObjectMapper.readValueNullable(value: String?): T? {

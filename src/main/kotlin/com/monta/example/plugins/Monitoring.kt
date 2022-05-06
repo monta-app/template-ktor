@@ -37,6 +37,12 @@ fun Application.configureMonitoring(): PrometheusMeterRegistry {
     }
 
     routing {
+        get("/health") {
+            call.respond(
+                HttpStatusCode.OK,
+                ApplicationResponse(HttpStatusCode.OK)
+            )
+        }
         get("/prometheus") {
             call.respond(
                 appMicrometerRegistry.scrape()

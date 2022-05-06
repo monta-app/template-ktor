@@ -1,17 +1,10 @@
 package com.monta.example.book
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.monta.example.configureApplication
-import com.monta.example.util.Environment
+import com.monta.example.getApiClient
+import com.monta.example.setupApplication
 import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
 import org.junit.Test
 import strikt.api.expectThat
@@ -22,24 +15,9 @@ class BookModuleTest {
 
     @Test
     fun getBookById() = testApplication {
-        application {
-            Environment.current = Environment.Test
-            configureApplication()
-        }
+        setupApplication()
 
-        val realClient = createClient {
-            install(ContentNegotiation) {
-                jackson {
-                    enable(SerializationFeature.INDENT_OUTPUT)
-                    registerKotlinModule()
-                    registerModule(JavaTimeModule())
-                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    findAndRegisterModules()
-                }
-            }
-        }
+        val realClient = getApiClient()
 
         val response = realClient.get("/book/1")
 
