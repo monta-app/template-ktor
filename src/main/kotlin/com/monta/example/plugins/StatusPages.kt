@@ -1,46 +1,32 @@
 package com.monta.example.plugins
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.monta.utils.ktor.ApplicationResponse
+import com.monta.utils.ktor.exception.ApplicationException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
+import mu.KotlinLogging
+import org.slf4j.MarkerFactory
+
+private val logger = KotlinLogging.logger {}
+private val errorMarker = MarkerFactory.getMarker("UNCAUGHT_EXCEPTION")
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<ApplicationException> { call, cause ->
-            call.respond(cause.status, cause)
+            call.respond(
+                cause.status,
+                cause.toApplicationResponse()
+            )
+        }
+        exception<Exception> { call, cause ->
+            logger.error(errorMarker, "uncaught exception", cause)
+
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                ApplicationResponse(HttpStatusCode.InternalServerError)
+            )
         }
     }
-}
-
-/**
- * General response data class
- */
-data class ApplicationResponse(
-    @JsonIgnore
-    val status: HttpStatusCode,
-    val message: String?,
-    val errorCode: String? = null,
-    val context: Map<String, Any?>? = null,
-) {
-
-    @JsonProperty("code")
-    val code: Int = status.value
-
-    constructor(status: HttpStatusCode) : this(status, status.description, null, null)
-}
-
-/**
- * General wrapper class for handling any kind of Application base exception
- */
-open class ApplicationException(
-    val status: HttpStatusCode,
-    message: String? = null,
-    val readableMessage: String?,
-    val errorCode: String?,
-    val context: Map<String, Any?>? = null,
-) : Exception(message) {
-    constructor(status: HttpStatusCode) : this(status, status.description, null, null)
 }

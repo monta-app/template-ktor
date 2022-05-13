@@ -2,19 +2,19 @@ package com.monta.example
 
 import com.monta.example.book.registerBookModule
 import com.monta.example.plugins.configureDatabase
+import com.monta.example.plugins.configureKoin
 import com.monta.example.plugins.configureMonitoring
-import com.monta.example.plugins.security.configureSecurity
 import com.monta.example.plugins.configureSerialization
 import com.monta.example.plugins.configureStatusPages
-import com.monta.example.util.Environment
-import com.monta.example.util.getEnvironment
+import com.monta.example.plugins.security.configureSecurity
+import com.monta.utils.ktor.configureEnvironment
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.TimeZone
 
 fun main() {
     embeddedServer(
@@ -25,8 +25,6 @@ fun main() {
             config = HoconApplicationConfig(
                 config = ConfigFactory.load()
             )
-
-            Environment.current = config.getEnvironment()
 
             module {
                 configureApplication()
@@ -43,11 +41,14 @@ fun main() {
 fun Application.configureApplication() {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
-    configureSerialization()
-    val metricsRegistry = configureMonitoring()
-    configureDatabase(metricsRegistry, true)
-    configureSecurity()
+    configureKoin()
+
+    configureEnvironment()
+    configureMonitoring()
+    configureDatabase(true)
     configureStatusPages()
+    configureSerialization()
+    configureSecurity()
 
     // Modules
     registerBookModule()

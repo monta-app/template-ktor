@@ -13,8 +13,11 @@ group = "com.monta.example"
 version = "0.0.1"
 
 repositories {
+    mavenLocal()
     mavenCentral()
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+    }
 }
 
 dependencies {
@@ -30,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages-jvm")
 
     // Injection
+    val koinVersion = "3.2.0"
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
@@ -49,13 +53,15 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Database
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation(platform("org.jetbrains.exposed:exposed-bom:$exposedVersion"))
+    implementation("org.jetbrains.exposed", "exposed-core")
+    implementation("org.jetbrains.exposed", "exposed-dao")
+    implementation("org.jetbrains.exposed", "exposed-jdbc")
+    implementation("org.jetbrains.exposed", "exposed-java-time")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.flywaydb:flyway-core:8.5.10")
     runtimeOnly("mysql:mysql-connector-java:8.0.29")
+    runtimeOnly("com.h2database:h2:2.1.212")
 
     // Metrics
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm")
@@ -65,6 +71,8 @@ dependencies {
     // Logging
     implementation("io.ktor:ktor-server-call-logging-jvm")
     implementation("io.ktor:ktor-server-call-id-jvm")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+
     runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
 

@@ -19,7 +19,7 @@ class BookModuleTest {
 
         val realClient = getApiClient()
 
-        val response = realClient.get("/book/1")
+        val response = realClient.get("/api/book/1")
 
         expectThat(response) {
             get { response.status }
@@ -31,7 +31,8 @@ class BookModuleTest {
         expectThat(bookResponse) {
             get { name }.isEqualTo("A really cool book")
             get { description }.isEqualTo("This is a really cool book")
-            get { checkedOutAt }.isEqualTo(Instant.parse("2022-01-01T00:00:00Z"))
+            get { status }.isEqualTo(BookStatus.CheckedIn)
+            get { statusAt }.isEqualTo(Instant.parse("2022-01-01T00:00:00Z"))
             get { createdAt }.isEqualTo(Instant.parse("2022-01-01T00:00:00Z"))
         }
     }

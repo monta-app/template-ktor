@@ -2,7 +2,7 @@ package com.monta.example.plugins.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import java.util.Date
+import java.util.*
 
 internal fun createToken(jwtConfig: JwtConfiguration, username: String) = JWT.create()
     .withAudience(jwtConfig.audience)

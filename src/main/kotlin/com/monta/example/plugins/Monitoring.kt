@@ -1,5 +1,6 @@
 package com.monta.example.plugins
 
+import com.monta.utils.ktor.ApplicationResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.metrics.micrometer.*
@@ -10,13 +11,21 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.koin.dsl.module
+import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 
-fun Application.configureMonitoring(): PrometheusMeterRegistry {
-    val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+val monitorKoinModule = module {
+    single {
+        PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+    }
+}
+
+fun Application.configureMonitoring() {
+    val meterRegistry: PrometheusMeterRegistry by inject()
 
     install(MicrometerMetrics) {
-        registry = appMicrometerRegistry
+        registry = meterRegistry
     }
 
     install(CallLogging) {
@@ -45,10 +54,8 @@ fun Application.configureMonitoring(): PrometheusMeterRegistry {
         }
         get("/prometheus") {
             call.respond(
-                appMicrometerRegistry.scrape()
+                meterRegistry.scrape()
             )
         }
     }
-
-    return appMicrometerRegistry
 }

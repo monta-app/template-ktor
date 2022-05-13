@@ -18,7 +18,7 @@ class ApplicationTest {
 
         expectThat(client.get("/health")) {
             get { status }.isEqualTo(HttpStatusCode.OK)
-            get { runBlocking { bodyAsText() } }.isEqualTo("{\"message\":\"OK\",\"code\":200}")
+            get { runBlocking { bodyAsText() } }.isEqualTo("{\"status\":\"OK\",\"code\":200}")
         }
     }
 }

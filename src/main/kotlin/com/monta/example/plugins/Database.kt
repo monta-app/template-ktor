@@ -1,13 +1,15 @@
 package com.monta.example.plugins
 
-import com.monta.example.util.Environment
+import com.monta.utils.ktor.Environment
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
+import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import javax.sql.DataSource
@@ -15,12 +17,11 @@ import kotlin.system.exitProcess
 
 private val logger = LoggerFactory.getLogger("database_configuration")
 
-fun Application.configureDatabase(
-    meterRegistry: MeterRegistry,
-    migrate: Boolean,
-) {
-    val databaseConfiguration = DatabaseConfiguration(environment.config)
-    val dataSource = databaseConfiguration.toDataSource(meterRegistry)
+fun Application.configureDatabase(migrate: Boolean) {
+    val meterRegistry: PrometheusMeterRegistry by inject()
+
+    val dataSource = DatabaseConfiguration(environment.config).toDataSource(meterRegistry)
+
     if (migrate) startFlyway(dataSource)
     startDatabase(dataSource)
 }
